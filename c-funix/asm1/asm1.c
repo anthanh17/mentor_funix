@@ -1,12 +1,14 @@
 #include <math.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #define PI 3.14159265
 
 double distance_angle[6] = {0};
 double median[3] = {0};
 double centroid[2] = {0};
+double duong_cao[3] = {0};
 
 double calculate_distance(double xA, double yA, double xB, double yB) {
   return sqrt(pow(xB - xA, 2) + pow(yB - yA, 2));
@@ -40,7 +42,7 @@ void goccanh_tamgiac(double xA, double yA, double xB, double yB, double xC,
                      double yC) {
   // Tính độ dài các cạnh của tam giác
   double AB = calculate_distance(xA, yA, xB, yB);
-  double BC = calculate_distance(AB, yB, xC, yC);
+  double BC = calculate_distance(xB, yB, xC, yC);
   double CA = calculate_distance(xC, yC, xA, yA);
 
   // Tính góc của tam giác
@@ -79,10 +81,27 @@ void xet_tam_giac(int ax, int ay, int bx, int by, int cx, int cy) {
   int dotABBC = dotProduct(vectorAB, vectorBC);
   int dotABCA = dotProduct(vectorAB, vectorCA);
 
+  // Tính độ dài các cạnh của tam giác
+  double AB = calculate_distance(ax, ay, bx, by);
+  double BC = calculate_distance(bx, by, cx, cy);
+  double CA = calculate_distance(cx, cy, ax, ay);
+
+  // Tính góc của tam giác
+  double angleA = calculate_angle(CA, AB, BC);
+  double angleB = calculate_angle(AB, BC, CA);
+  double angleC = calculate_angle(BC, CA, AB);
+
   if (dotABBC == 0 || dotABCA == 0) {
     printf("Tam giac ABC la tam giac vuong");
     if (dotABBC == 0 && dotABCA == 0) {
-      printf(" can.\n");
+      printf(" can ");
+      if (angleA == 90)
+        printf(" tai A \n");
+      else if (angleB == 90)
+        printf(" tai B \n");
+      else if (angleC == 90)
+        printf(" tai C \n");
+
     } else {
       printf(".\n");
     }
@@ -103,18 +122,21 @@ double dientich_tamgiac(int ax, int ay, int bx, int by, int cx, int cy) {
 }
 
 // Tính đường cao của tam giác
-double duongcao_tamgiac(double ax, double ay, double bx, double by, double cx,
-                        double cy) {
-  double sideAB = calculate_distance(ax, ay, bx, by);
-  double sideBC = calculate_distance(bx, by, cx, cy);
-  double sideCA = calculate_distance(cx, cy, ax, ay);
+double duongcao_tamgiac(double x1, double y1, double x2, double y2, double x3,
+                        double y3) {
+  // Đường cao h₁ từ điểm A:
+  double h1 = fabs((x2 - x3) * (y1 - y2) - (x1 - x2) * (y2 - y3)) /
+              sqrt(pow(x2 - x3, 2) + pow(y2 - y3, 2));
+  // Đường cao h₂ từ điểm B:
+  double h2 = fabs((x3 - x1) * (y2 - y3) - (x2 - x3) * (y3 - y1)) /
+              sqrt(pow(x3 - x1, 2) + pow(y3 - y1, 2));
+  // Đường cao h₃ từ điểm C:
+  double h3 = fabs((x1 - x2) * (y3 - y1) - (x3 - x1) * (y1 - y2)) /
+              sqrt(pow(x1 - x2, 2) + pow(y1 - y2, 2));
 
-  // Sử dụng công thức đường cao của tam giác
-  double s = (sideAB + sideBC + sideCA) / 2;
-  double altitude =
-      (2 * sqrt(s * (s - sideAB) * (s - sideBC) * (s - sideCA))) / sideBC;
-
-  return altitude;
+  duong_cao[0] = h1;
+  duong_cao[1] = h2;
+  duong_cao[2] = h3;
 }
 
 // Tính đường trung tuyến của tam giác
@@ -135,8 +157,45 @@ void tam_tamgiac(double ax, double ay, double bx, double by, double cx,
 void giaima_tamgiac(double ax, double ay, double bx, double by, double cx,
                     double cy) {
   if (kiemtra_tamgiac(ax, ay, bx, by, cx, cy)) {
-    printf(" “A, B, C hop thanh mot tam giac”\n");
+    printf("--------------------------------------------”\n");
+    printf("Toa do 3 diem A, B, C hop thanh mot tam giac”\n");
+
+    printf("1. So do co ban cua tam giac: \n");
     goccanh_tamgiac(ax, ay, bx, by, cx, cy);
+
+    printf("  Chieu dai canh AB: %.2lf \n", distance_angle[0]);
+    printf("  Chieu dai canh BC: %.2lf \n", distance_angle[1]);
+    printf("  Chieu dai canh CA: %.2lf \n", distance_angle[2]);
+
+    printf("  Goc A: %.2lf \n", distance_angle[3]);
+    printf("  Goc A: %.2lf \n", distance_angle[4]);
+    printf("  Goc A: %.2lf \n", distance_angle[5]);
+
+    // tính chất của tam giác ABC
+    xet_tam_giac(ax, ay, bx, by, cx, cy);
+    printf("\n--------------------------------------------”\n");
+    // diện tích của tam giác ABC
+    printf("2. Dien tich cua tam giac ABC: %.2lf \n",
+           dientich_tamgiac(ax, ay, bx, by, cx, cy));
+    printf("--------------------------------------------”\n");
+    // duong cao
+    printf("3. So do nang cao tam giac ABC \n");
+    duongcao_tamgiac(ax, ay, bx, by, cx, cy);
+    printf("Do dai duong cao tu dinh A: %.2lf \n", duong_cao[0]);
+    printf("Do dai duong cao tu dinh B: %.2lf \n", duong_cao[1]);
+    printf("Do dai duong cao tu dinh C: %.2lf \n", duong_cao[2]);
+
+    // trung tuyen
+    trungtuyen_tamgiac(ax, ay, bx, by, cx, cy);
+    printf("Do dai trung tuyen tu dinh A: %.2lf \n", median[0]);
+    printf("Do dai trung tuyen tu dinh B: %.2lf \n", median[1]);
+    printf("Do dai trung tuyen tu dinh C: %.2lf \n", median[2]);
+    printf("--------------------------------------------”\n");
+    // tam tam giac
+    tam_tamgiac(ax, ay, bx, by, cx, cy);
+    printf("4. Toa do diem dac biet cua tam giac ABC \n");
+    printf("Toa do trong tam [%.2lf, %.2lf] \n", centroid[0], centroid[1]);
+
   } else {
     printf("A, B, C khong hop thanh mot tam giac\n");
   }
@@ -145,12 +204,29 @@ void giaima_tamgiac(double ax, double ay, double bx, double by, double cx,
 int main() {
   double xA, yA, xB, yB, xC, yC;
 
-  printf("Nhap toa do diem A: ");
-  scanf("%lf %lf", &xA, &yA);
-  printf("Nhap toa do diem B: ");
-  scanf("%lf %lf", &xB, &yB);
-  printf("Nhap toa do diem C: ");
-  scanf("%lf %lf", &xC, &yC);
+  printf("Nhap toa do diem A: \n");
+  printf("xA: ");
+  scanf("%lf", &xA);
+  printf("yA: ");
+  scanf("%lf", &yA);
+
+  printf("Nhap toa do diem B: \n");
+  printf("xB: ");
+  scanf("%lf", &xB);
+  printf("yB: ");
+  scanf("%lf", &yB);
+
+  printf("Nhap toa do diem C: \n");
+  printf("xC: ");
+  scanf("%lf", &xC);
+  printf("yC: ");
+  scanf("%lf", &yC);
+
+  printf("Toa do diem A da nhap: A(%.2lf, %.2lf) \n", xA, yA);
+  printf("Toa do diem B da nhap: B(%.2lf, %.2lf) \n", xB, yB);
+  printf("Toa do diem C da nhap: C(%.2lf, %.2lf) \n", xC, yC);
+
+  giaima_tamgiac(xA, yA, xB, yB, xC, yC);
 
   return 0;
 }
