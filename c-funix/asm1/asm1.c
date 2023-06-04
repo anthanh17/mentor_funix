@@ -103,7 +103,8 @@ double dientich_tamgiac(int ax, int ay, int bx, int by, int cx, int cy) {
 }
 
 // Tính đường cao của tam giác
-double duongcao_tamgiac(int ax, int ay, int bx, int by, int cx, int cy) {
+double duongcao_tamgiac(double ax, double ay, double bx, double by, double cx,
+                        double cy) {
   double sideAB = calculate_distance(ax, ay, bx, by);
   double sideBC = calculate_distance(bx, by, cx, cy);
   double sideCA = calculate_distance(cx, cy, ax, ay);
@@ -117,16 +118,28 @@ double duongcao_tamgiac(int ax, int ay, int bx, int by, int cx, int cy) {
 }
 
 // Tính đường trung tuyến của tam giác
-void trungtuyen_tamgiac(int ax, int ay, int bx, int by, int cx, int cy) {
-  median[0] = calculateDistance(ax, ay, (bx + cx) / 2, (by + cy) / 2);
-  median[1] = calculateDistance(bx, by, (ax + cx) / 2, (ay + cy) / 2);
-  median[2] = calculateDistance(cx, cy, (ax + bx) / 2, (ay + by) / 2);
+void trungtuyen_tamgiac(double ax, double ay, double bx, double by, double cx,
+                        double cy) {
+  median[0] = calculate_distance(ax, ay, (bx + cx) / 2, (by + cy) / 2);
+  median[1] = calculate_distance(bx, by, (ax + cx) / 2, (ay + cy) / 2);
+  median[2] = calculate_distance(cx, cy, (ax + bx) / 2, (ay + by) / 2);
 }
 
 // Tính đường trọng tâm của tam giác
-void calculateCentroid(int ax, int ay, int bx, int by, int cx, int cy) {
+void tam_tamgiac(double ax, double ay, double bx, double by, double cx,
+                 double cy) {
   centroid[0] = (ax + bx + cx) / 3.0;
   centroid[1] = (ay + by + cy) / 3.0;
+}
+
+void giaima_tamgiac(double ax, double ay, double bx, double by, double cx,
+                    double cy) {
+  if (kiemtra_tamgiac(ax, ay, bx, by, cx, cy)) {
+    printf(" “A, B, C hop thanh mot tam giac”\n");
+    goccanh_tamgiac(ax, ay, bx, by, cx, cy);
+  } else {
+    printf("A, B, C khong hop thanh mot tam giac\n");
+  }
 }
 
 int main() {
