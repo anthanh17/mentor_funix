@@ -63,18 +63,37 @@ void JsonExtract(char json[], char hoten[], char gioitinh[], char sodienthoai[],
 }
 
 char* multi_tok(char* input, char* delimiter) {
+  // Khai báo một biến static string, được sử dụng để lưu trữ trạng thái của
+  // chuỗi đang được phân tích.
   static char* string;
+
+  // Nếu tham số input không phải là NULL, string được gán bằng input. Điều này
+  // xảy ra khi gọi hàm multi_tok lần đầu tiên hoặc muốn thay đổi chuỗi đang
+  // được phân tích.
   if (input != NULL) string = input;
 
+  // Kiểm tra xem string có phải là NULL hay không. Nếu là NULL, tức là đã phân
+  // tích hết chuỗi và không còn mẩu tin nào nữa, hàm trả về NULL
   if (string == NULL) return string;
 
+  // hàm strstr() để tìm vị trí của ký tự phân tách (delimiter) trong string.
+  // Kết quả được lưu trữ trong con trỏ end.
   char* end = strstr(string, delimiter);
+
+  // Nếu end là NULL, tức là không tìm thấy ký tự phân tách, chứng tỏ đã đến
+  // cuối chuỗi. Trong trường hợp này, ta cần trả về mẩu tin cuối cùng và cập
+  // nhật string thành NULL.
   if (end == NULL) {
     char* temp = string;
     string = NULL;
     return temp;
   }
 
+  // Nếu end không phải là NULL, ta đã tìm thấy ký tự phân tách. Trước tiên, ta
+  // gán ký tự null-terminator ('\0') cho vị trí end, từ đó tách mẩu tin từ temp
+  // (bắt đầu từ đầu chuỗi) đến vị trí trước ký tự phân tách. Sau đó, cập nhật
+  // string thành vị trí sau ký tự phân tách bằng cách thêm độ dài của
+  // delimiter.
   char* temp = string;
 
   *end = '\0';
