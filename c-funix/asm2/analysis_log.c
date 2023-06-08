@@ -17,7 +17,7 @@ int fileToStr(char* str) {
 
   status = fread(str, MAXLENGTHFILE, 1, fp);
 
-  printf("Noi dung cua file log.txt: \n%s", str);
+  // printf("Noi dung cua file log.txt: \n%s", str);
 
   fclose(fp);
   fp = NULL;
@@ -25,8 +25,8 @@ int fileToStr(char* str) {
 }
 
 int main() {
-  int buffer[MAXLENGTHFILE];
-  int status = fileToStr(buffer);
-  printf("test: %d \n", status);
+  char buffer[MAXLENGTHFILE];
+  if (fileToStr(buffer) != 1)
+    printf("Noi dung cua file log.txt: \n%s", buffer);
   return 0;
 }
