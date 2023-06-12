@@ -1,0 +1,81 @@
+{
+    "BoPhan": [
+        {
+            "id": "C++",
+            "bonus": 123000
+        },
+        {
+            "id": "SALE001",
+            "bonus": 1000000
+        },
+        {
+            "id": "ad",
+            "bonus": 2000000
+        },
+        {
+            "id": "PHP",
+            "bonus": 1500000
+        },
+        {
+            "id": "GO",
+            "bonus": 1500000
+        }
+    ],
+    "NhanVien": [
+        {
+            "id": "NV001",
+            "department_code": "SALE001",
+            "position": "nv",
+            "name": "Da chinh sua",
+            "salary_base": 1000000,
+            "working_days": 23,
+            "working_performance": 1,
+            "bonus": 1000000,
+            "late_comming_days": 4
+        },
+        {
+            "id": "NV002",
+            "department_code": "C++",
+            "position": "ql",
+            "name": "nguyen the a",
+            "salary_base": 2000000,
+            "working_days": 23,
+            "working_performance": 1.5,
+            "bonus": 2000000,
+            "late_comming_days": 2
+        },
+        {
+            "id": "Specti",
+            "department_code": "PHP",
+            "position": "nv",
+            "name": "nguyen dang",
+            "salary_base": 1235480.0,
+            "working_days": 21.0,
+            "working_performance": 2.0,
+            "bonus": 152400.0,
+            "late_comming_days": 3.0
+        },
+        {
+            "id": "ere3",
+            "department_code": "ad",
+            "position": "ql",
+            "name": "ng van toan",
+            "salary_base": 125054.0,
+            "working_days": 20.0,
+            "working_performance": 1.5,
+            "bonus": 500000.0,
+            "late_comming_days": 10.0
+        },
+        {
+            "id": "ABC",
+            "department_code": "C++",
+            "position": "ql",
+            "name": "hahaha",
+            "salary_base": 1000000.0,
+            "working_days": 23.0,
+            "working_performance": 1.5,
+            "bonus": 200000.0,
+            "late_comming_days": 2.0
+        }
+    ]
+}
