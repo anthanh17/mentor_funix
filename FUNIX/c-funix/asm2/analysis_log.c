@@ -1,5 +1,6 @@
 #include <stdbool.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #define FILENAME "log.txt"
@@ -159,6 +160,9 @@ int CountMessagesSent(const char* str, const char* sub) {
 // mã network và hiển thị các bản tin của thiết bị đó.
 
 int countMessagesSentFromNetworkCode(char* str, const char* code) {
+  char string_file[MAXLENGTHFILE];
+  strcpy(string_file, str);
+
   int count = 0;
   bool is_set = false;
   bool is_network_code = false;
@@ -166,7 +170,7 @@ int countMessagesSentFromNetworkCode(char* str, const char* code) {
   char data[18][300];
   char line_display[300];
 
-  char* line = strtok(str, "\n");
+  char* line = strtok(string_file, "\n");
   int i = 0;
 
   while (line != NULL) {
@@ -213,20 +217,444 @@ int countMessagesSentFromNetworkCode(char* str, const char* code) {
   return count;
 }
 
+// [Yêu cầu nâng cao] Câu 3: Tính số công tắc có trao đổi thông tin với bộ điều
+// khiển trung tâm trong thời gian Log. Mỗi công tắc có 1 địa chỉ Network và
+// Endpoint riêng biệt, trường "type" là "switch". Viết hàm hiển thị số lượng và
+// địa chỉ của công tắc đã trao đổi thông tin với bộ điều khiển trung tâm trong
+// thời gian Log.
+
+int kiemTraChuoiCon(char arr[], char sub[]) {
+  int len1 = strlen(arr);
+  int len2 = strlen(sub);
+
+  // Duyệt qua mảng arr để tìm chuỗi con sub
+  for (int i = 0; i <= len1 - len2; i++) {
+    int j;
+    for (j = 0; j < len2; j++) {
+      if (arr[i + j] != sub[j]) {
+        break;
+      }
+    }
+    if (j == len2) {
+      return 1;  // Tìm thấy chuỗi con
+    }
+  }
+
+  return 0;  // Không tìm thấy chuỗi con
+}
+
+void CalculateNumberSwitchesExchangeInfo(char* str) {
+  char string_file[MAXLENGTHFILE];
+  strcpy(string_file, str);
+
+  struct Info {
+    char network_addres[50];
+    char endpoint[10];
+  } store[20];
+
+  char data[18][300];
+
+  char* line = strtok(string_file, "\n");
+  int i = 0;
+
+  while (line != NULL) {
+    strcpy(data[i], line);
+    i++;
+    line = strtok(NULL, "\n");
+  }
+
+  int j;
+
+  //   bool is_switch = false;
+  int index = 0;
+  bool is_same = false;
+
+  int k = 0;
+
+  for (j = 0; j < i; j++) {
+    char* token = strtok(data[j], "[");
+    token = strtok(NULL, "[");
+    token = strtok(NULL, ",");
+    // printf("\n%s ", token);
+
+    if (strstr(token, "\"type\":\"switch\"") != NULL) {
+      token = strtok(NULL, "-");
+      token = strtok(NULL, "]");
+
+      char* code = strtok(token, ":");
+      char* subcode1 = strtok(NULL, "-");
+      char* subcode2 = strtok(NULL, "-");
+
+      // Xu ly subcode2 căt bo " trong 1"
+      char* end = subcode2 + strlen(subcode2) - 1;
+      *end = '\0';
+
+      k = 0;
+      do {
+        if (strcmp(store[k].network_addres, code) == 0) {
+          is_same = true;
+          break;
+        }
+
+        k++;
+      } while (k < index);
+
+      if (is_same) {
+        is_same = false;
+        continue;
+      } else {
+        strcpy(store[index].network_addres, code);
+        strcpy(store[index].endpoint, subcode2);
+        index++;
+        is_same = false;
+      }
+
+    } else {
+      continue;
+    }
+  }
+
+  for (i = 0; i < index; i++) {
+    printf("\nThiet bi %d co dia chi la: NWK - %s, ENDPOINT - %s", i + 1,
+           store[i].network_addres, store[i].endpoint);
+  }
+}
+
+// [Yêu cầu nâng cao] Câu 4: Tính số bản tin gửi đi bị lỗi, không nhận phản hồi
+// lại. Dựa vào "reqid", các bạn cần tìm ra số bản tin gửi đi mà không nhận được
+// phản hồi. Viết hàm trả về giá trị số bản tin gửi đi bị lỗi.
+
+int CountMessagesError(char* str) {
+  int count = 0;
+
+  char string_file[MAXLENGTHFILE];
+  strcpy(string_file, str);
+
+  char data[18][300];
+
+  char* line = strtok(string_file, "\n");
+  int i = 0;
+
+  while (line != NULL) {
+    strcpy(data[i], line);
+    i++;
+    line = strtok(NULL, "\n");
+  }
+
+  int e = 0;
+  char even[9][10];  // chan
+
+  int o = 0;
+  char odd[9][10];  // le
+
+  int j;
+  for (j = 0; j < i; j++) {
+    if (j % 2 == 0) {
+      char* token = strtok(data[j], "[");
+      token = strtok(NULL, "}");
+      token = strtok(NULL, "\"");
+      token = strtok(NULL, "\"");
+      token = strtok(NULL, "\"");
+      token = strtok(NULL, "\"");
+      token = strtok(NULL, "\"");
+      token = strtok(NULL, "\"");
+      token = strtok(NULL, "\"");
+      token = strtok(NULL, "\"");
+      // printf("\n%s ", token);
+      strcpy(even[e], token);
+      e++;
+      // printf("\n------------------------");
+    } else {
+      char* token = strtok(data[j], "[");
+      token = strtok(NULL, "}");
+      token = strtok(NULL, "\"");
+      token = strtok(NULL, "\"");
+      token = strtok(NULL, "\"");
+      token = strtok(NULL, "\"");
+      token = strtok(NULL, "\"");
+      token = strtok(NULL, "\"");
+      token = strtok(NULL, "\"");
+      token = strtok(NULL, "\"");
+      token = strtok(NULL, "\"");
+      token = strtok(NULL, "\"");
+      token = strtok(NULL, "\"");
+      token = strtok(NULL, "\"");
+      // printf("\n%s ", token);
+      strcpy(odd[o], token);
+      o++;
+      // printf("\n------------------------");
+    }
+    // break;
+  }
+  int k;
+  for (k = 0; k < 9; k++) {
+    if (strcmp(even[k], odd[k]) != 0) {
+      count++;
+    }
+  }
+
+  return count;
+}
+
+// Câu 5: Tính độ trễ lớn nhất giữa bản tin gửi đi và bản tin phản hồi, tính
+// bằng mili giây (ms). Dựa vào trường thời gian, các bạn có thể tính bằng cách
+// lấy thời gian phản hồi trừ đi thời gian gửi đi, không tính đến các bản tin
+// lỗi. Viết hàm tìm độ trễ lớn nhất giữa các bản tin gửi đi và bản tin phản
+// hồi.
+
+void removeFirstTwoChars(char* str) {
+  str += 2;
+
+  while (*str) {
+    *(str - 2) = *str;
+    str++;
+  }
+  *(str - 2) = '\0';
+}
+
+int calc_mili(const char* str) {
+  char chuoi[256];
+  strcpy(chuoi, str);
+
+  char* token;
+
+  char h[10];
+  char m[10];
+  char s[10];
+
+  // Tách thành phần giờ
+  token = strtok(chuoi, ":");
+  // printf("Giờ: %s\n", token);
+  strcpy(h, token);
+
+  // Tách thành phần phút
+  token = strtok(NULL, ":");
+  // printf("Phút: %s\n", token);
+  strcpy(m, token);
+
+  // Tách thành phần giây
+  token = strtok(NULL, ":");
+  // printf("Giây: %s\n", token);
+  strcpy(s, token);
+
+  return atoi(h) * 3600000 + atoi(m) * 60000 + atoi(s) * 1000;
+}
+
+int DelayMax(char* str) {
+  int maxdelay = 0;
+
+  char string_file[MAXLENGTHFILE];
+  strcpy(string_file, str);
+
+  char data[18][300];
+
+  char* line = strtok(string_file, "\n");
+  int i = 0;
+
+  // split line
+  while (line != NULL) {
+    strcpy(data[i], line);
+    i++;
+    line = strtok(NULL, "\n");
+  }
+
+  // split time and reqid
+  struct Info {
+    char time_raw[20];
+    char reqid[10];
+  } temp[18];
+
+  int j;
+  for (j = 0; j < i; j++) {
+    if (j % 2 == 0) {
+      char* token = strtok(data[j], "]");
+      token = strtok(NULL, "-");
+      token = strtok(NULL, "-");
+      token = strtok(NULL, "]");
+      strcpy(temp[j].time_raw, token);
+      removeFirstTwoChars(temp[j].time_raw);
+      // printf("\ntime %d: %s ", j, temp[j].time_raw);
+
+      // reqid
+      token = strtok(NULL, "}");
+      token = strtok(NULL, "\"");
+      token = strtok(NULL, "\"");
+      token = strtok(NULL, "\"");
+      token = strtok(NULL, "\"");
+      token = strtok(NULL, "\"");
+      token = strtok(NULL, "\"");
+      token = strtok(NULL, "\"");
+      token = strtok(NULL, "\"");
+      strcpy(temp[j].reqid, token);
+      // printf("\nreqid %d: %s ", j, temp[j].reqid);
+    } else {
+      char* token = strtok(data[j], "]");
+      token = strtok(NULL, "-");
+      token = strtok(NULL, "-");
+      token = strtok(NULL, "]");
+      strcpy(temp[j].time_raw, token);
+      removeFirstTwoChars(temp[j].time_raw);
+      // printf("\ntime %d: %s ", j, temp[j].time_raw);
+
+      // reqid
+      token = strtok(NULL, "}");
+      token = strtok(NULL, "\"");
+      token = strtok(NULL, "\"");
+      token = strtok(NULL, "\"");
+      token = strtok(NULL, "\"");
+      token = strtok(NULL, "\"");
+      token = strtok(NULL, "\"");
+      token = strtok(NULL, "\"");
+      token = strtok(NULL, "\"");
+      token = strtok(NULL, "\"");
+      token = strtok(NULL, "\"");
+      token = strtok(NULL, "\"");
+      token = strtok(NULL, "\"");
+      strcpy(temp[j].reqid, token);
+      // printf("\nreqid %d: %s ", j, temp[j].reqid);
+    }
+  }
+
+  int k;
+  for (k = 0; k < 18;) {
+    if (strcmp(temp[k].reqid, temp[k + 1].reqid) == 0) {
+      // printf("\nreqid %d: %s ", k, temp[k].time_raw);
+      // printf("\nreqid %d: %s \n", k + 1, temp[k+1].time_raw);
+      int total = calc_mili(temp[k + 1].time_raw) - calc_mili(temp[k].time_raw);
+
+      if (total > maxdelay) {
+        maxdelay = total;
+      }
+    }
+    k += 2;
+  }
+
+  return maxdelay;
+}
+
+// Câu 6: Tính thời gian trễ trung bình trong khoảng thời gian log, tương tự câu
+// 5 thời gian trễ trung bình này chỉ tính trên các bản tin điều khiển thành
+// công. Viết hàm tính độ trễ trung bình trong khoảng thời gian log, là giá trị
+// trung bình cộng giữa các độ trễ của bản tin gửi đi và bản tin phản hồi.
+
+int DelayTB(char* str) {
+  char string_file[MAXLENGTHFILE];
+  strcpy(string_file, str);
+
+  char data[18][300];
+
+  char* line = strtok(string_file, "\n");
+  int i = 0;
+
+  // split line
+  while (line != NULL) {
+    strcpy(data[i], line);
+    i++;
+    line = strtok(NULL, "\n");
+  }
+
+  // split time and reqid
+  struct Info {
+    char time_raw[20];
+    char reqid[10];
+  } temp[18];
+
+  int j;
+  for (j = 0; j < i; j++) {
+    if (j % 2 == 0) {
+      char* token = strtok(data[j], "]");
+      token = strtok(NULL, "-");
+      token = strtok(NULL, "-");
+      token = strtok(NULL, "]");
+      strcpy(temp[j].time_raw, token);
+      removeFirstTwoChars(temp[j].time_raw);
+      // printf("\ntime %d: %s ", j, temp[j].time_raw);
+
+      // reqid
+      token = strtok(NULL, "}");
+      token = strtok(NULL, "\"");
+      token = strtok(NULL, "\"");
+      token = strtok(NULL, "\"");
+      token = strtok(NULL, "\"");
+      token = strtok(NULL, "\"");
+      token = strtok(NULL, "\"");
+      token = strtok(NULL, "\"");
+      token = strtok(NULL, "\"");
+      strcpy(temp[j].reqid, token);
+      // printf("\nreqid %d: %s ", j, temp[j].reqid);
+    } else {
+      char* token = strtok(data[j], "]");
+      token = strtok(NULL, "-");
+      token = strtok(NULL, "-");
+      token = strtok(NULL, "]");
+      strcpy(temp[j].time_raw, token);
+      removeFirstTwoChars(temp[j].time_raw);
+      // printf("\ntime %d: %s ", j, temp[j].time_raw);
+
+      // reqid
+      token = strtok(NULL, "}");
+      token = strtok(NULL, "\"");
+      token = strtok(NULL, "\"");
+      token = strtok(NULL, "\"");
+      token = strtok(NULL, "\"");
+      token = strtok(NULL, "\"");
+      token = strtok(NULL, "\"");
+      token = strtok(NULL, "\"");
+      token = strtok(NULL, "\"");
+      token = strtok(NULL, "\"");
+      token = strtok(NULL, "\"");
+      token = strtok(NULL, "\"");
+      token = strtok(NULL, "\"");
+      strcpy(temp[j].reqid, token);
+      // printf("\nreqid %d: %s ", j, temp[j].reqid);
+    }
+  }
+
+  int k;
+  int total = 0;
+  int count = 0;
+  for (k = 0; k < 18;) {
+    if (strcmp(temp[k].reqid, temp[k + 1].reqid) == 0) {
+      // printf("\nreqid %d: %s ", k, temp[k].time_raw);
+      // printf("\nreqid %d: %s \n", k + 1, temp[k+1].time_raw);
+      total += (calc_mili(temp[k + 1].time_raw) - calc_mili(temp[k].time_raw));
+      count++;
+    }
+    k += 2;
+  }
+
+  return total / count;
+}
+
 int main() {
   char data_file[MAXLENGTHFILE];
   if (fileToStr(data_file) < 0) return 0;
   // printf("Noi dung cua file log.txt: \n%s", buffer);
-  // printf("so ban tin: %d", CountMessagesSent(data_file, "\"cmd\":\"set\""));
 
-  char network_code[30] = "DC53";
+  // Cau 1
+  printf("so ban tin: %d", CountMessagesSent(data_file, "\"cmd\":\"set\""));
+
+  // Cau 2
+  // to do xu ly TH hoa thuong
+  char network_code[30];  // "DC53"
   printf("\nNhap dia chi nwk cua thiet bi: ");
   fgets(network_code, sizeof(network_code), stdin);
-  network_code[strcspn(network_code, "\n")] =
-      '\0';  // Xóa ký tự newline từ fgets
-
+  // Xóa ký tự newline từ fgets
+  network_code[strcspn(network_code, "\n")] = '\0';
   printf("So ban tin gui di la: %d ",
          countMessagesSentFromNetworkCode(data_file, network_code));
+
+  // Cau 3
+  CalculateNumberSwitchesExchangeInfo(data_file);
+
+  // Cau 4
+  printf("\nSo ban tin loi: %d ", CountMessagesError(data_file));
+
+  // Cau 5
+  printf("\nDo tre lon nhat la: %d Millisecond", DelayMax(data_file));
+
+  // Cau 6
+  printf("\nDo tre trung binh la: %d Millisecond", DelayTB(data_file));
 
   return 0;
 }
