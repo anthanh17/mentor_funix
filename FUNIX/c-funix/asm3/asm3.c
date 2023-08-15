@@ -214,11 +214,16 @@ void shortestPathBFS(int destinationX, int destinationY) {
 }
 
 int main() {
+  // Init map
   int temp[MAX_COLUMN][MAX_ROW] = {
-      {1, 0, 0, 0, 1, 0, 1, 1, 0}, {1, 1, 0, 1, 1, 1, 0, 0, 1},
-      {0, 1, 0, 1, 1, 0, 1, 0, 1}, {0, 1, 1, 0, 0, 1, 0, 1, 1},
-      {0, 0, 1, 0, 1, 0, 1, 0, 0}, {1, 1, 1, 0, 0, 0, 0, 1, 1},
-      {1, 0, 1, 1, 1, 1, 1, 0, 0}, {1, 1, 1, 0, 0, 0, 1, 0, 1},
+      {1, 0, 0, 0, 1, 0, 1, 1, 0},
+      {1, 1, 0, 1, 1, 1, 0, 0, 1},
+      {0, 1, 0, 1, 1, 0, 1, 0, 1},
+      {0, 1, 1, 0, 0, 1, 0, 1, 1},
+      {0, 0, 1, 0, 1, 0, 1, 0, 0},
+      {1, 1, 1, 0, 0, 0, 0, 1, 1},
+      {1, 0, 1, 1, 1, 1, 1, 0, 0},
+      {1, 1, 1, 0, 0, 0, 1, 0, 1},
       {0, 0, 0, 1, 1, 1, 1, 1, 0}};
 
   int i, j;
@@ -241,9 +246,27 @@ int main() {
     }
     printf("\n");
   }
+  printf("\nToa do cua o xuat phat la O(0,0) \n");
 
-  int dong = 6;
-  int cot = 6;
+  // Input data
+  int dong = 0;
+  int cot = 0;
+
+  while (1) {
+    printf("\nHay nhap toa do cua o dich den A: \n");
+    printf("Nhap dong: ");
+    scanf("%d", &dong);
+    printf("Nhap cot: ");
+    scanf("%d", &cot);
+
+    if (dong < 0 || dong > 8 || cot < 0 || cot > 8) {
+      printf("\nGia tri cua dong phai tu 0 den 8!\n");
+      printf("Gia tri cua cot phai tu 0 den 8!\n\n");
+    } else {
+      break;
+    }
+  }
+
   shortestPathBFS(dong, cot);
 
   return 0;
