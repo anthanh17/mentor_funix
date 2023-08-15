@@ -20,6 +20,7 @@ def tinhdiem_trungbinh(dir : str):
     title = []
     with open(dir) as fp:
         line = fp.readline()
+        # print(line)
         cnt = 1
         while line:
             if cnt < 2:
@@ -31,6 +32,7 @@ def tinhdiem_trungbinh(dir : str):
                 #print(point)
                 ans[point[0]] = tinh_diem_tu_nhien_xa_hoi(title, point)
             line = fp.readline()
+            # print(line)
             cnt += 1
     print(ans)
     return ans
@@ -53,4 +55,4 @@ def luudiem_trungbinh(data):
 
 if __name__ == '__main__':
     data = tinhdiem_trungbinh("diem_chitiet.txt")
-    luudiem_trungbinh(data)
+    # luudiem_trungbinh(data)

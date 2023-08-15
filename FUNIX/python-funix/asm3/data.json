@@ -23,17 +23,6 @@
     ],
     "NhanVien": [
         {
-            "id": "NV001",
-            "department_code": "SALE001",
-            "position": "nv",
-            "name": "Da chinh sua",
-            "salary_base": 1000000,
-            "working_days": 23,
-            "working_performance": 1,
-            "bonus": 1000000,
-            "late_comming_days": 4
-        },
-        {
             "id": "NV002",
             "department_code": "C++",
             "position": "ql",
@@ -69,13 +58,24 @@
         {
             "id": "ABC",
             "department_code": "C++",
-            "position": "ql",
-            "name": "hahaha",
+            "position": "nv",
+            "name": "heheh hehe ",
             "salary_base": 1000000.0,
             "working_days": 23.0,
             "working_performance": 1.5,
             "bonus": 200000.0,
-            "late_comming_days": 2.0
+            "late_comming_days": 90.0
+        },
+        {
+            "id": "0000011111",
+            "department_code": "C++",
+            "position": "ql",
+            "name": "Minh QUnag",
+            "salary_base": 24324.0,
+            "working_days": 90.0,
+            "working_performance": 12.0,
+            "bonus": 12.0,
+            "late_comming_days": 4.0
         }
     ]
 }
